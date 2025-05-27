@@ -19,28 +19,19 @@ st.sidebar.header("Filtros")
 tenure_min, tenure_max = int(df['tenure'].min()), int(df['tenure'].max())
 tenure_range = st.sidebar.slider("Tempo de contrato (meses)", tenure_min, tenure_max, (tenure_min, tenure_max))
 
-# Filtro valor mensal - ampliando faixa de valores e protegendo default para não sair do intervalo
+# Filtro valor mensal
 valor_mensal_min, valor_mensal_max = float(df['valor_mensal'].min()), float(df['valor_mensal'].max())
-faixa_min = max(0, valor_mensal_min - 20)
-faixa_max = valor_mensal_max + 20
-
-default_min = max(faixa_min, valor_mensal_min)
-default_max = min(faixa_max, valor_mensal_max)
-
-valor_mensal_range = st.sidebar.slider(
-    "Valor Mensal (R$)",
-    min_value=faixa_min,
-    max_value=faixa_max,
-    value=(default_min, default_max)
-)
+valor_mensal_range = st.sidebar.slider("Valor Mensal (R$)", valor_mensal_min, valor_mensal_max, (valor_mensal_min, valor_mensal_max))
 
 # Filtro SeniorCitizen (checkbox)
 senior = st.sidebar.checkbox("Mostrar somente clientes SeniorCitizen", value=False)
 
 # Aplicar filtros no dataframe
 df_filtered = df[
-    (df['tenure'] >= tenure_range[0]) & (df['tenure'] <= tenure_range[1]) &
-    (df['valor_mensal'] >= valor_mensal_range[0]) & (df['valor_mensal'] <= valor_mensal_range[1])
+    (df['tenure'] >= tenure_range[0]) &
+    (df['tenure'] <= tenure_range[1]) &
+    (df['valor_mensal'] >= valor_mensal_range[0]) &
+    (df['valor_mensal'] <= valor_mensal_range[1])
 ]
 
 if senior:
