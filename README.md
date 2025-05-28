@@ -640,6 +640,106 @@ files.download('modelo_rf.joblib')
 files.download('preprocessor.joblib')
 
 ```
+## 📊 Etapa 23: Importância das Features no Random Forest
+Nesta etapa, identificamos quais variáveis foram mais relevantes na predição do churn com base no modelo final ajustado via GridSearch.
+
+🛠️ Procedimentos Realizados:
+1. Extração dos scores de importância
+Utilizando o atributo .feature_importances_ do melhor modelo.
+
+2. Reconstrução dos nomes das variáveis
+
+* Pegamos os nomes gerados pelo OneHotEncoder.
+
+* Combinamos com os nomes das variáveis numéricas (mantidas diretamente no modelo).
+
+3. Criação de DataFrame de Importância
+Um DataFrame foi construído com as variáveis e seus respectivos scores, ordenado de forma decrescente.
+
+4. Visualização Gráfica
+Utilizamos um gráfico de barras horizontais para destacar as top 20 variáveis mais relevantes na decisão do modelo.
+
+📌 Esta análise é fundamental para:
+
+* Guiar estratégias de retenção, identificando fatores críticos de churn;
+
+* Fornecer insights de negócio com base nos dados preditivos.
+
+🔜 Na próxima etapa, visualizaremos esse gráfico com o pacote matplotlib ou seaborn, facilitando a comunicação dos resultados com stakeholders.
+
+## 🎯 Etapa 24: Treinamento e Avaliação do Modelo Random Forest com as 10 Features Mais Importantes
+Nesta etapa, buscamos reduzir a complexidade do modelo utilizando apenas as 10 variáveis mais relevantes, segundo a análise de importância de features feita com RandomForest. Isso nos ajuda a responder perguntas como:
+
+* É possível manter uma boa performance preditiva com menos variáveis?
+
+* Quais são as variáveis mais impactantes na previsão de churn?
+
+* Reduzindo o número de colunas, o modelo ganha em desempenho e interpretabilidade?
+
+✅ Objetivo:
+Avaliar o desempenho de um novo modelo Random Forest treinado apenas com as 10 features mais importantes, comparando seus resultados com o modelo completo.
+
+📌 Principais Passos da Implementação:
+1. Extração das Importâncias das Features
+Utilizamos o atributo .feature_importances_ do melhor modelo Random Forest (encontrado via GridSearchCV) para extrair a importância relativa de cada variável já transformada pelo pipeline.
+
+2. Seleção das Top 10 Features
+Criamos um DataFrame com os nomes das features e seus respectivos pesos, ordenando do mais importante para o menos.
+
+Selecionamos as 10 primeiras features para compor o novo conjunto de dados.
+
+3. Redução das Matrizes de Treino e Teste
+Usamos a transformação preprocessor.transform() para obter as versões numéricas de X_train e X_test.
+
+Selecionamos somente as colunas correspondentes às top 10 features.
+
+4. Reaplicação do SMOTE
+Reaplicamos o SMOTE somente no conjunto de treino com as features reduzidas para balancear novamente as classes.
+
+5. Treinamento do Novo Modelo
+Instanciamos e treinamos um novo RandomForestClassifier utilizando os mesmos hiperparâmetros ótimos encontrados anteriormente, mas com o conjunto reduzido.
+
+6. Avaliação do Modelo com 10 Variáveis
+Avaliamos o modelo reduzido usando acurácia, relatório de classificação e matriz de confusão.
+
+📊 Interpretação Esperada
+* Reduzir o número de variáveis pode:
+
+* Tornar o modelo mais rápido e leve;
+
+* Aumentar a interpretabilidade dos resultados;
+
+* Reduzir risco de overfitting;
+
+* Revelar quais variáveis realmente fazem diferença no churn.
+
+* No entanto, é essencial validar se o modelo simplificado mantém um desempenho aceitável.
+
+🧠 Boas Práticas
+* A análise de features mais importantes pode variar entre algoritmos — esta análise é específica do RandomForestClassifier.
+
+* Sempre valide com o conjunto de teste para garantir que a simplificação não traga perda de desempenho.
+
+* Use esse tipo de abordagem para explicar melhor os resultados a pessoas não técnicas (ex.: áreas de negócios, marketing).
+
+📌 Exemplo de Saída Esperada:
+
+```bash
+Top 10 features mais importantes:
+         feature     importance
+0  tenure_scaled       0.15293
+1  MonthlyCharges   0.12983
+2  Contract_Two year  0.09823
+...
+
+```
+📈 Exemplo de Métrica:
+
+```bash
+Acurácia com top 10 features: 0.8182
+
+```
+🔁 Continue a análise avaliando o impacto de thresholds e curvas ROC/PR na etapa seguinte!
 
 
 
