@@ -76,7 +76,7 @@ df = load_data()
 
 st.title("Dashboard de Churn - Big Insights")
 
-# Sidebar filtro para usar na exibição de dados
+# --- Sidebar para filtros ---
 st.sidebar.header("Filtros")
 
 # Filtro tenure (tempo de contrato)
@@ -102,7 +102,13 @@ valor_mensal_range = st.sidebar.slider(
 # Filtro SeniorCitizen (checkbox)
 senior_only = st.sidebar.checkbox("Mostrar somente clientes SeniorCitizen", value=False)
 
-# Aplicar filtro no dataframe para exibição
+# Novos filtros checkbox para variáveis dummy
+contract_monthly = st.sidebar.checkbox("Contract Month-to-month", value=False)
+techsupport_no = st.sidebar.checkbox("TechSupport No", value=False)
+paymentmethod_echeck = st.sidebar.checkbox("PaymentMethod Electronic check", value=False)
+onlinebackup_no = st.sidebar.checkbox("OnlineBackup No", value=False)
+
+# Aplicar filtros no dataframe
 df_filtered = df[
     (df['tenure'] >= tenure_range[0]) &
     (df['tenure'] <= tenure_range[1]) &
@@ -112,6 +118,18 @@ df_filtered = df[
 
 if senior_only:
     df_filtered = df_filtered[df_filtered['SeniorCitizen'] == 1]
+
+if contract_monthly:
+    df_filtered = df_filtered[df_filtered['Contract_Month-to-month'] == 1]
+
+if techsupport_no:
+    df_filtered = df_filtered[df_filtered['TechSupport_No'] == 1]
+
+if paymentmethod_echeck:
+    df_filtered = df_filtered[df_filtered['PaymentMethod_Electronic check'] == 1]
+
+if onlinebackup_no:
+    df_filtered = df_filtered[df_filtered['OnlineBackup_No'] == 1]
 
 # Colunas importantes para visualização
 colunas_importantes = [
@@ -154,9 +172,6 @@ with st.spinner('Treinando o modelo... isso pode levar alguns segundos.'):
 
     # Avaliar e exibir métricas para diferentes thresholds
     def avaliar_threshold(threshold, y_prob, y_true):
-        import io
-        import sys
-
         y_pred = (y_prob >= threshold).astype(int)
 
         report = classification_report(y_true, y_pred, output_dict=True)
@@ -178,7 +193,6 @@ with st.spinner('Treinando o modelo... isso pode levar alguns segundos.'):
     auc_roc = roc_auc_score(y_test, y_prob)
     ap_score = average_precision_score(y_test, y_prob)
 
-    import matplotlib.pyplot as plt
     fig, ax = plt.subplots(1, 2, figsize=(12, 5))
 
     ax[0].plot(fpr, tpr, label=f'AUC-ROC = {auc_roc:.2f}')
