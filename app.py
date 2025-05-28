@@ -1,30 +1,82 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.pipeline import Pipeline
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import (
     roc_auc_score, roc_curve,
     precision_recall_curve, average_precision_score,
     classification_report, confusion_matrix
 )
+import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="Dashboard Churn - Big Insights", layout="wide")
 
+# Carregar dados e gerar variáveis dummy
 @st.cache_data
 def load_data():
     df = pd.read_csv('df_expandido.csv')
 
-    # Criar variáveis dummy para as colunas categóricas relevantes
+    # Criar variáveis dummy para colunas categóricas relevantes
     dummies = pd.get_dummies(df[['Contract', 'TechSupport', 'PaymentMethod', 'OnlineBackup']], drop_first=False)
     df = pd.concat([df, dummies], axis=1)
 
     return df
 
+# Função para treinar o modelo com GridSearch
+@st.cache_data(show_spinner=True)
+def train_model(df):
+    # Mapear target binário (simples): Churn Yes=1, No=0
+    df = df.copy()
+    df['Churn_binary'] = df['Churn'].map({'Yes':1, 'No':0})
+
+    # Features importantes (numéricas + dummies)
+    feature_cols = [
+        'tenure', 'valor_mensal',
+        'Contract_Month-to-month', 'TechSupport_No',
+        'PaymentMethod_Electronic check', 'OnlineBackup_No',
+        'SeniorCitizen'
+    ]
+    X = df[feature_cols]
+    y = df['Churn_binary']
+
+    # Dividir treino/teste
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.3, random_state=42, stratify=y)
+
+    # Pipeline com scaler + RandomForest
+    pipeline = Pipeline([
+        ('scaler', StandardScaler()),
+        ('clf', RandomForestClassifier(random_state=42))
+    ])
+
+    # Parametros para GridSearch
+    param_grid = {
+        'clf__n_estimators': [50, 100],
+        'clf__max_depth': [5, 10, None],
+        'clf__min_samples_split': [2, 5]
+    }
+
+    grid_search = GridSearchCV(
+        pipeline,
+        param_grid,
+        cv=3,
+        scoring='roc_auc',
+        n_jobs=-1,
+        verbose=0
+    )
+
+    grid_search.fit(X_train, y_train)
+
+    return grid_search, X_test, y_test
+
 df = load_data()
 
 st.title("Dashboard de Churn - Big Insights")
 
-# --- Sidebar para filtros ---
+# Sidebar filtro para usar na exibição de dados
 st.sidebar.header("Filtros")
 
 # Filtro tenure (tempo de contrato)
@@ -48,9 +100,9 @@ valor_mensal_range = st.sidebar.slider(
 )
 
 # Filtro SeniorCitizen (checkbox)
-senior = st.sidebar.checkbox("Mostrar somente clientes SeniorCitizen", value=False)
+senior_only = st.sidebar.checkbox("Mostrar somente clientes SeniorCitizen", value=False)
 
-# Aplicar filtros no dataframe
+# Aplicar filtro no dataframe para exibição
 df_filtered = df[
     (df['tenure'] >= tenure_range[0]) &
     (df['tenure'] <= tenure_range[1]) &
@@ -58,16 +110,15 @@ df_filtered = df[
     (df['valor_mensal'] <= valor_mensal_range[1])
 ]
 
-if senior:
+if senior_only:
     df_filtered = df_filtered[df_filtered['SeniorCitizen'] == 1]
 
-# --- Seleção apenas das colunas importantes ---
+# Colunas importantes para visualização
 colunas_importantes = [
     'id_cliente', 'Churn', 'tenure', 'Contract_Month-to-month',
     'TechSupport_No', 'PaymentMethod_Electronic check', 'OnlineBackup_No'
 ]
 
-# Exibir as colunas mais relevantes após filtro
 df_exibicao = df_filtered[colunas_importantes]
 
 st.write(f"### Dados filtrados com variáveis importantes ({len(df_exibicao)} registros)")
@@ -88,60 +139,75 @@ with col3:
     churn_rate = 0 if len(df_exibicao) == 0 else (churn_count / len(df_exibicao)) * 100
     st.metric("Taxa de Churn (%)", f"{churn_rate:.2f}%")
 
-# --- Avaliação do modelo ---
-# Supondo que você já tem o grid_search treinado e X_test_prep, y_test definidos
-# 1. Obter probabilidades preditas para a classe positiva
-y_prob = grid_search.predict_proba(X_test_prep)[:, 1]
+st.write("---")
 
-# 2. Definir função para avaliar o modelo para diferentes thresholds
-def avaliar_threshold(threshold, y_prob, y_true):
-    y_pred = (y_prob >= threshold).astype(int)
-    print(f"\n=== Avaliação para threshold = {threshold:.2f} ===")
-    print("Relatório de Classificação:")
-    print(classification_report(y_true, y_pred))
-    print("Matriz de Confusão:")
-    print(confusion_matrix(y_true, y_pred))
-    acc = (y_pred == y_true).mean()
-    print(f"Acurácia: {acc:.4f}")
-    return y_pred
+# Treinar modelo
+st.write("### Treinamento e avaliação do modelo")
+with st.spinner('Treinando o modelo... isso pode levar alguns segundos.'):
 
-# 3. Plotar curva ROC e Precision-Recall
-fpr, tpr, thresholds_roc = roc_curve(y_test, y_prob)
-precision, recall, thresholds_pr = precision_recall_curve(y_test, y_prob)
-auc_roc = roc_auc_score(y_test, y_prob)
-ap_score = average_precision_score(y_test, y_prob)
+    grid_search, X_test, y_test = train_model(df)
 
-plt.figure(figsize=(12,5))
+    st.write(f"Melhores parâmetros encontrados: {grid_search.best_params_}")
 
-plt.subplot(1,2,1)
-plt.plot(fpr, tpr, label=f'AUC-ROC = {auc_roc:.2f}')
-plt.plot([0,1],[0,1],'k--')
-plt.xlabel('Falso Positivo')
-plt.ylabel('Verdadeiro Positivo')
-plt.title('Curva ROC')
-plt.legend()
+    # Probabilidades para a classe positiva
+    y_prob = grid_search.predict_proba(X_test)[:, 1]
 
-plt.subplot(1,2,2)
-plt.plot(recall, precision, label=f'AP = {ap_score:.2f}')
-plt.xlabel('Recall')
-plt.ylabel('Precision')
-plt.title('Curva Precision-Recall')
-plt.legend()
+    # Avaliar e exibir métricas para diferentes thresholds
+    def avaliar_threshold(threshold, y_prob, y_true):
+        import io
+        import sys
 
-plt.tight_layout()
-plt.show()
+        y_pred = (y_prob >= threshold).astype(int)
 
-# 4. Testar diferentes thresholds para achar um bom ponto de corte
-thresholds_teste = [0.3, 0.4, 0.5, 0.6, 0.7]
-for th in thresholds_teste:
-    avaliar_threshold(th, y_prob, y_test)
+        report = classification_report(y_true, y_pred, output_dict=True)
+        conf_mat = confusion_matrix(y_true, y_pred)
+        acc = (y_pred == y_true).mean()
 
-# Você pode escolher o threshold que melhor balanceia recall e precision para seu objetivo
-# Por exemplo, suponha que 0.4 é um bom valor:
-threshold_escolhido = 0.4
-y_pred_ajustado = (y_prob >= threshold_escolhido).astype(int)
+        st.write(f"**Threshold = {threshold:.2f}**")
+        st.write(f"Acurácia: {acc:.4f}")
+        st.write("Relatório de Classificação:")
+        st.json(report)
+        st.write("Matriz de Confusão:")
+        st.write(conf_mat)
 
-print(f"\n=== Avaliação final com threshold ajustado = {threshold_escolhido} ===")
-print(classification_report(y_test, y_pred_ajustado))
-print("Matriz de Confusão:")
-print(confusion_matrix(y_test, y_pred_ajustado))
+        return y_pred
+
+    # Mostrar curvas ROC e Precision-Recall com matplotlib + st.pyplot
+    fpr, tpr, _ = roc_curve(y_test, y_prob)
+    precision, recall, _ = precision_recall_curve(y_test, y_prob)
+    auc_roc = roc_auc_score(y_test, y_prob)
+    ap_score = average_precision_score(y_test, y_prob)
+
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots(1, 2, figsize=(12, 5))
+
+    ax[0].plot(fpr, tpr, label=f'AUC-ROC = {auc_roc:.2f}')
+    ax[0].plot([0,1],[0,1],'k--')
+    ax[0].set_xlabel('Falso Positivo')
+    ax[0].set_ylabel('Verdadeiro Positivo')
+    ax[0].set_title('Curva ROC')
+    ax[0].legend()
+
+    ax[1].plot(recall, precision, label=f'AP = {ap_score:.2f}')
+    ax[1].set_xlabel('Recall')
+    ax[1].set_ylabel('Precision')
+    ax[1].set_title('Curva Precision-Recall')
+    ax[1].legend()
+
+    st.pyplot(fig)
+
+    # Testar thresholds e mostrar avaliação
+    thresholds_teste = [0.3, 0.4, 0.5, 0.6, 0.7]
+    for th in thresholds_teste:
+        avaliar_threshold(th, y_prob, y_test)
+
+    # Threshold escolhido para demonstração
+    threshold_escolhido = 0.4
+    y_pred_ajustado = (y_prob >= threshold_escolhido).astype(int)
+
+    st.write(f"### Avaliação final com threshold ajustado = {threshold_escolhido}")
+    st.text(classification_report(y_test, y_pred_ajustado))
+    st.write("Matriz de Confusão:")
+    st.write(confusion_matrix(y_test, y_pred_ajustado))
+
+
