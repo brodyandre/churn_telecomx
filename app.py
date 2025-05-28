@@ -91,7 +91,7 @@ tenure_range = st.sidebar.slider(
 
 # Filtro valor mensal
 valor_mensal_min = round(float(df['valor_mensal'].min()), 2)
-valor_mensal_max = round(float(df['valor_mensal'].max()), 2)
+valor_mensal_max = 2000.00  # Alterado para 2000.00
 valor_mensal_range = st.sidebar.slider(
     "Valor Mensal (R$)",
     min_value=valor_mensal_min,
@@ -223,5 +223,4 @@ with st.spinner('Treinando o modelo... isso pode levar alguns segundos.'):
     st.text(classification_report(y_test, y_pred_ajustado))
     st.write("Matriz de Confusão:")
     st.write(confusion_matrix(y_test, y_pred_ajustado))
-
 
