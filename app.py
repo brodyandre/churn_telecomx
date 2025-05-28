@@ -49,21 +49,29 @@ df_filtered = df[
 if senior:
     df_filtered = df_filtered[df_filtered['SeniorCitizen'] == 1]
 
-# Mostrar dados filtrados
-st.write(f"### Dados filtrados ({len(df_filtered)} registros)")
-st.dataframe(df_filtered)
+# --- Seleção apenas das colunas importantes ---
+colunas_importantes = [
+    'id_cliente', 'Churn', 'tenure', 'Contract_Month-to-month',
+    'TechSupport_No', 'PaymentMethod_Electronic check', 'OnlineBackup_No'
+]
+
+# Exibir as colunas mais relevantes após filtro
+df_exibicao = df_filtered[colunas_importantes]
+
+st.write(f"### Dados filtrados com variáveis importantes ({len(df_exibicao)} registros)")
+st.dataframe(df_exibicao)
 
 # Estatísticas básicas
 st.write("### Estatísticas rápidas")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.metric("Clientes Totais", len(df_filtered))
+    st.metric("Clientes Totais", len(df_exibicao))
 
 with col2:
-    churn_count = df_filtered[df_filtered['Churn'] == 'Yes'].shape[0]
+    churn_count = df_exibicao[df_exibicao['Churn'] == 'Yes'].shape[0]
     st.metric("Clientes que Cancelaram (Churn)", churn_count)
 
 with col3:
-    churn_rate = 0 if len(df_filtered) == 0 else (churn_count / len(df_filtered)) * 100
+    churn_rate = 0 if len(df_exibicao) == 0 else (churn_count / len(df_exibicao)) * 100
     st.metric("Taxa de Churn (%)", f"{churn_rate:.2f}%")
