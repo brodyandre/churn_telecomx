@@ -110,4 +110,3 @@ with col2:
 with col3:
     churn_rate = 0 if len(df_filtered) == 0 else (churn_count / len(df_filtered)) * 100
     st.metric("Taxa de Churn (%)", f"{churn_rate:.2f}%")
-
