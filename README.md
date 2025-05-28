@@ -426,4 +426,220 @@ fig_churn_contrato.show()
 
 * Recomendação: Desenvolver estratégias para migrar clientes de contratos mensais para anuais.
 
+## 📅 Etapa 17: Gráfico — Taxa de Churn por Tempo de Contrato (Tenure)
+Este gráfico mostra a relação entre o tempo de permanência (tenure) e o churn.
+
+🧮 Cálculo
+Convertendo o campo de churn em valores numéricos para calcular a média:
+
+```bash
+df_expandido['Churn_num'] = df_expandido['Churn'].map({'Yes': 1, 'No': 0})
+churn_por_tenure = df_expandido.groupby('tenure')['Churn_num'].mean().reset_index()
+
+```
+📈 Visualização
+
+```bah
+fig_tenure = px.line(
+    churn_por_tenure,
+    x='tenure',
+    y='Churn_num',
+    labels={
+        'tenure': 'Tempo de Contrato (meses)',
+        'Churn_num': 'Taxa de Churn'
+    },
+    title='📅 Taxa de Churn por Tempo de Contrato',
+    markers=True
+)
+fig_tenure.update_layout(yaxis_tickformat=".0%")
+fig_tenure.show()
+
+```
+🧐 Interpretação
+* A taxa de churn é alta nos primeiros meses, o que indica baixa fidelização inicial.
+
+* Após o tempo inicial, a taxa de churn diminui gradualmente.
+
+* Recomendação: Implementar ações de retenção logo após a adesão, como onboarding eficiente, promoções e suporte dedicado.
+
+## 🖼 Etapa 18: Exportação de Gráficos como Imagens (PNG)
+Instalamos e testamos o Kaleido, uma engine para exportação de imagens com Plotly:
+
+```bash
+!pip install -U kaleido
+
+```
+🧪 Teste
+
+```bash
+import plotly.express as px
+import plotly.io as pio
+
+fig = px.bar(x=["A", "B", "C"], y=[1, 3, 2])
+pio.write_image(fig, "/content/test_kaleido.png")
+
+```
+💾 Exportação em lote
+
+```bash
+figuras_para_salvar = [
+    'fig_churn', 'fig_contrato', 'fig_pagamento', 'fig_internet',
+    'fig_phone', 'fig_valor_mensal', 'fig_tenure', 'fig_churn_contrato', 'fig'
+]
+
+for nome_fig in figuras_para_salvar:
+    fig = globals().get(nome_fig)
+    if fig is not None:
+        caminho = f"/content/{nome_fig}.png"
+        fig.write_image(caminho)
+        print(f"✅ {nome_fig} salva em {caminho}")
+    else:
+        print(f"⚠️ Figura {nome_fig} não encontrada.")
+
+```
+## 🧾 Etapa 19: Análise Final de Churn — Telecom X
+🔍 Visão Geral
+Clientes que cancelaram (Churn = Yes) versus os que permaneceram (Churn = No).
+
+📊 Análises Realizadas
+* Tipo de Contrato: Mensal tem maior churn.
+
+* Método de Pagamento: Eletrônico associado a maior churn.
+
+* Tecnologia de Internet: Fibra ótica apresenta maior churn.
+
+* Tempo de Contrato: Churn alto nos primeiros meses.
+
+💡 Recomendações Estratégicas
+* Retenção Proativa: Focar nos primeiros meses.
+
+* Melhoria na Fibra: Avaliar causas de insatisfação.
+
+* Revisar Formas de Pagamento: Propor alternativas mais engajadoras.
+
+* Ofertas de Fidelização: Incentivar contratos mais longos com vantagens.
+
+✅ Observações Finais
+Este relatório foi gerado automaticamente com Python no Google Colab utilizando bibliotecas como pandas, plotly e kaleido.
+Todos os gráficos foram salvos em formato .png para possível uso em dashboards ou apresentações.
+
+## 📥 Etapa 20: Download do Relatório Final
+Nesta etapa, disponibilizamos para download o relatório analítico em PDF, que resume os principais insights obtidos durante a análise exploratória de dados (EDA) sobre o churn na empresa Telecom X.
+
+* O relatório inclui:
+
+* Gráficos explicativos;
+
+* Estatísticas descritivas;
+
+* Perfis de clientes com maior probabilidade de cancelamento;
+
+* Recomendações estratégicas para redução do churn.
+
+```bash
+from IPython.display import FileLink
+
+# Link para download do relatório em PDF
+FileLink('/content/relatorio_churn_telecomx.pdf')
+
+```
+📎 Clique aqui para baixar o relatório
+
+## 🔜 Etapa 21: Pré-processamento para Machine Learning
+Nesta etapa, preparamos o dataset df_expandido para a aplicação de algoritmos de Machine Learning, com foco no Random Forest Classifier, a fim de prever quais clientes possuem maior propensão ao churn.
+
+✅ Etapas Realizadas:
+1. Criação da variável alvo binária (Churn_num)
+A variável categórica Churn foi convertida para 0 (não cancelou) e 1 (cancelou), compatível com modelos supervisionados.
+
+2.Tratamento de valores nulos
+Linhas com dados ausentes nas colunas valor_total ou Churn foram removidas para evitar vieses no treinamento.
+
+3. Separação de features e target
+Variáveis como id_cliente foram descartadas, mantendo apenas os atributos relevantes para predição.
+
+4. Codificação de variáveis categóricas
+Utilizamos LabelEncoder inicialmente para transformar variáveis textuais em formato numérico.
+
+5. Divisão do dataset
+O conjunto foi dividido em 80% treino e 20% teste, preservando a proporção de churn.
+
+6. Treinamento com Random Forest
+Um modelo foi treinado para detectar padrões associados ao cancelamento de serviços.
+
+7. Avaliação do desempenho
+Métricas como acurácia, matriz de confusão e relatório de classificação foram geradas para medir a performance.
+
+### Diagnóstico de Dados Ausentes
+
+```bash
+total_nans = df_expandido.isna().sum().sum()
+print(f"Total de valores NaN no dataframe: {total_nans}")
+
+print("\nQuantidade de NaNs por coluna:")
+print(df_expandido.isna().sum())
+
+```
+## 🎯 Etapa 22: Classificação com Random Forest + SMOTE
+* Nesta etapa, aprimoramos o modelo de classificação aplicando duas estratégias importantes:
+
+* One-Hot Encoding para variáveis categóricas;
+
+* SMOTE (Synthetic Minority Oversampling Technique) para balanceamento de classes.
+
+🔁 Pipeline Executado:
+1. Conversão da variável Churn para binário
+
+2. Remoção de registros com alvo nulo
+
+3. Separação de X (features) e y (target)
+
+4. Identificação de colunas numéricas e categóricas
+
+5. Aplicação de OneHotEncoder via ColumnTransformer
+
+6. Divisão do dataset em treino/teste com stratify
+
+7. Aplicação de SMOTE no conjunto de treino
+
+8. Treinamento com GridSearchCV e RandomForestClassifier
+
+* Métrica: F1-score
+
+* Validação cruzada: 5-fold
+
+🧠 Melhores hiperparâmetros encontrados:
+
+```bash
+{
+    'n_estimators': 200,
+    'max_depth': 20,
+    'min_samples_split': 5
+}
+
+```
+📈 Avaliação do Modelo:
+Acurácia
+
+* Relatório de Classificação (Precision, Recall, F1)
+
+* Matriz de Confusão
+
+💾 Exportação dos Arquivos:
+
+```bash
+joblib.dump(modelo_rf, 'modelo_rf.joblib')
+joblib.dump(preprocessor, 'preprocessor.joblib')
+
+```
+### Downloads automáticos (se no Google Colab):
+
+```bah
+from google.colab import files
+files.download('modelo_rf.joblib')
+files.download('preprocessor.joblib')
+
+```
+
+
 
