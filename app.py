@@ -145,4 +145,3 @@ print(f"\n=== Avaliação final com threshold ajustado = {threshold_escolhido} =
 print(classification_report(y_test, y_pred_ajustado))
 print("Matriz de Confusão:")
 print(confusion_matrix(y_test, y_pred_ajustado))
-
