@@ -1,3 +1,21 @@
+# 📊 Projeto: Previsão de Churn - Telecom X
+
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repositório-24292e?style=for-the-badge&logo=github&logoColor=white)](https://github.com/brodyandre/churn_telecomx)
+[![Streamlit App](https://img.shields.io/badge/Dashboard-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](#) <!-- Coloque aqui o link da app Streamlit se houver -->
+[![License](https://img.shields.io/github/license/brodyandre/churn_telecomx?style=for-the-badge)](https://github.com/brodyandre/churn_telecomx/blob/main/LICENSE)
+
+---
+
+🎯 **Objetivo**:  
+Este projeto tem como propósito prever a **evasão de clientes (churn)** em uma empresa de telecomunicações fictícia — a **Telecom X** — utilizando técnicas de **aprendizado de máquina**, **análise exploratória de dados**, visualizações interativas com **Streamlit** e boas práticas de projeto em ciência de dados.
+
+🧠 Desenvolvido com foco em aprendizado, melhoria contínua e contribuição à comunidade científica.
+
+🔗 Acesse o projeto completo aqui:  
+👉 **[https://github.com/brodyandre/churn_telecomx](https://github.com/brodyandre/churn_telecomx)**
+
+---
+
 # 📉 Análise e Previsão de Churn - Telecom X
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python)](https://www.python.org/)
