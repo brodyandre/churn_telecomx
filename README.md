@@ -1,8 +1,11 @@
 # 📊 Projeto: Previsão de Churn - Telecom X
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repositório-24292e?style=for-the-badge&logo=github&logoColor=white)](https://github.com/brodyandre/churn_telecomx)
-[![Streamlit App](https://img.shields.io/badge/Dashboard-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](#) <!-- Coloque aqui o link da app Streamlit se houver -->
+[![Streamlit App](https://img.shields.io/badge/Dashboard-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://churntelecomx-unhnurkqur8sppnwipdczy.streamlit.app/)
 [![License](https://img.shields.io/github/license/brodyandre/churn_telecomx?style=for-the-badge)](https://github.com/brodyandre/churn_telecomx/blob/main/LICENSE)
+
+
+---
 
 ---
 
