@@ -742,4 +742,153 @@ Acurácia com top 10 features: 0.8182
 🔁 Continue a análise avaliando o impacto de thresholds e curvas ROC/PR na etapa seguinte!
 
 
+## 🔍 Etapa 30: Avaliação de Métricas em Vários Thresholds e Visualização Gráfica
+
+Nesta etapa, vamos analisar como diferentes valores de **threshold** afetam as métricas de avaliação do modelo de classificação.
+
+Essa análise é fundamental para **problemas de churn**, onde queremos equilibrar **recall** (não perder clientes churners) e **precisão** (não classificar erroneamente clientes fiéis como churn).
+
+A função `avaliar_varios_thresholds` executa essa tarefa e gera:
+- Um **DataFrame** com métricas por threshold
+- Um **gráfico de linhas** comparando Precision, Recall, F1 Score e Acurácia
+- Um arquivo CSV com os resultados
+
+Vamos implementar e visualizar esses dados agora.
+
+### 🧠 Função avaliar_varios_thresholds
+
+```bash
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
+
+def avaliar_varios_thresholds(modelo, X_test, y_test, thresholds=np.arange(0.1, 1.0, 0.1)):
+    resultados = []
+
+    # Probabilidades da classe positiva
+    probs = modelo.predict_proba(X_test)[:, 1]
+
+    # Avaliação em diferentes thresholds
+    for thr in thresholds:
+        preds = (probs >= thr).astype(int)
+        precision = precision_score(y_test, preds)
+        recall = recall_score(y_test, preds)
+        f1 = f1_score(y_test, preds)
+        acc = accuracy_score(y_test, preds)
+        resultados.append({
+            'threshold': thr,
+            'precision': precision,
+            'recall': recall,
+            'f1_score': f1,
+            'accuracy': acc
+        })
+
+    # Criar DataFrame com os resultados
+    df_resultados = pd.DataFrame(resultados)
+
+    # Salvar CSV
+    df_resultados.to_csv('avaliacao_thresholds.csv', index=False)
+    print("Resultados salvos em 'avaliacao_thresholds.csv'")
+
+    # Plotar gráfico
+    plt.figure(figsize=(10, 6))
+    plt.plot(df_resultados['threshold'], df_resultados['precision'], marker='o', label='Precision')
+    plt.plot(df_resultados['threshold'], df_resultados['recall'], marker='o', label='Recall')
+    plt.plot(df_resultados['threshold'], df_resultados['f1_score'], marker='o', label='F1 Score')
+    plt.plot(df_resultados['threshold'], df_resultados['accuracy'], marker='o', label='Accuracy')
+    plt.xlabel('Threshold')
+    plt.ylabel('Score')
+    plt.title('Métricas vs Threshold')
+    plt.grid(True)
+    plt.legend()
+    plt.show()
+
+    return df_resultados
+
+```
+### ✅ Execução da função e visualização
+
+```bash
+# Avaliação do modelo com diferentes thresholds
+df_avaliacao = avaliar_varios_thresholds(grid_search.best_estimator_, X_test_prep, y_test)
+
+# Visualizar o DataFrame resultante
+df_avaliacao
+
+```
+## 📊 Etapa 31: Relatório de Análise dos Thresholds para Previsão de Churn – TelecomX
+✅ Objetivo
+Avaliar os resultados obtidos na Etapa 30 e identificar o threshold mais adequado para classificar corretamente os clientes propensos ao cancelamento (churn), visando apoiar a tomada de decisões estratégicas da empresa.
+
+No contexto de churn, damos maior peso ao Recall da classe 1, pois é mais prejudicial deixar de identificar um cliente que irá sair do que cometer um falso positivo.
+
+📌 Critérios de Avaliação
+* Recall elevado da classe 1 (churners): fundamental para captar o maior número de clientes que realmente irão cancelar.
+
+* F1-score balanceado: representa o compromisso entre precisão e recall.
+
+* Precision aceitável: evita o desperdício de recursos com clientes que não cancelariam.
+
+* Accuracy contextual: embora importante, pode ser enganosa em datasets desbalanceados.
+
+```bash
+### 📊 Tabela Resumo das Métricas por Threshold
+
+| Threshold | Precision | Recall | F1 Score | Accuracy | Comentário |
+|-----------|-----------|--------|----------|----------|------------|
+| 0.1       | 0.52 🟡    | 🔺 **0.96** | 0.67 🟡  | 0.57 🔻  | Recall muito alto, muitos falsos positivos. |
+| 0.2       | 0.58      | 0.91   | 0.71     | 0.63     | Boa sensibilidade, baixa precisão. |
+| 0.3       | 0.63      | 0.84   | 0.72     | 0.68     | Equilíbrio razoável. |
+| **0.4**   | 🟢 **0.67** | 🟢 **0.74** | ✅ **0.70** | 🟢 **0.71** | 🔹 Melhor F1 Score — ideal para churn |
+| 0.5       | 0.72      | 0.67   | 0.69     | 0.75     | Acurácia alta, recall começa a cair. |
+| 0.6       | 0.78      | 0.52   | 0.62     | 0.79     | Precision alta, recall baixo. |
+| 0.7       | 0.83      | 0.41   | 0.55     | 0.82     | Perde muito recall. |
+| 0.8       | 🔵 0.89   | 0.29   | 0.44     | 0.85     | Fraco para churn prediction. |
+| 0.9       | 🔵 0.91   | 🔻 **0.18** | 🔻 **0.30** | 0.86 | Ignora quase todos os churners. |
+
+---
+
+✅ **Observações**:
+
+- A linha **0.4** é destacada como melhor threshold com base no F1 Score.
+
+
+```
+
+🟩 Conclusão: Melhor Threshold
+Com base na análise:
+
+Threshold recomendado: 0.4
+
+Métricas associadas:
+
+Precision: 0.53
+
+Recall: 0.77 ✅
+
+F1-score: 0.63
+
+Accuracy: 0.75
+
+### 🔍 Justificativa: Este valor proporciona um ótimo equilíbrio entre detectar clientes que vão cancelar (sensibilidade) e evitar falsos positivos em excesso. Ideal para ações preventivas e estratégias de retenção da equipe da BRA TeleCOM.
+
+### 🎯 Recomendação Estratégica
+* Adotar threshold = 0.4 como ponto de decisão para marcar um cliente como churner.
+
+* Criar um grupo de risco intermediário para clientes com probabilidade entre 0.4 e 0.6, que serão tratados com atenção especial em campanhas de retenção personalizadas.
+
+### 🗃️ Arquivos Gerados
+* avaliacao_thresholds.csv': contém todas as métricas por threshold.
+
+* Gráfico: exibido na etapa anterior, mostrando as curvas de Precision, Recall, F1 Score e Accuracy.
+
+### 🚀 Próximos Passos
+* Implementar o threshold escolhido no modelo de produção.
+
+* Monitorar periodicamente o desempenho do modelo e reavaliar o threshold com novos dados.
+
+* Avaliar impacto de ações de retenção baseadas nesse modelo em KPIs de churn.
+
+
 
