@@ -1206,7 +1206,7 @@ O painel fornece uma maneira poderosa e visual de analisar o churn por segmento,
 📍 GitHub: [@brodyandre](https://github.com/brodyandre)
 
 > *Ralei bastante pra conseguir chegar até aqui!!!*  
-> Tentando apresentar um projeto completo, com início, meio e fim, com a intenção de criar um projeto de alto nível, que pudesse contribuir com a comunidade científica.  
+> Tentando apresentar um projeto completo baseado em dados, com início, meio e fim, com a expectativa de criar um projeto de alto nível, que pudesse contribuir com a comunidade científica.  
 > Claro que ele não é perfeito! Mas acredito que juntos podemos ir mais longe.  
 > **Venha, contribua. Vamos tornar esse projeto uma referência!**
 
