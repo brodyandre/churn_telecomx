@@ -4,12 +4,12 @@
 [![Streamlit App](https://img.shields.io/badge/Dashboard-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://churntelecomx-unhnurkqur8sppnwipdczy.streamlit.app/)
 [![License](https://img.shields.io/github/license/brodyandre/churn_telecomx?style=for-the-badge)](https://github.com/brodyandre/churn_telecomx/blob/main/LICENSE)
 
-
+#### para acessar o dashboard interativo, ja com o modelo random forest treinado e devidamente ajustado. Clique no icone do stremalite acima
 ---
 
 ---
 
-🎯 **Objetivo**:  
+# 🎯 **Objetivo**:  
 Este projeto tem como propósito prever a **evasão de clientes (churn)** em uma empresa de telecomunicações fictícia — a **Telecom X** — utilizando técnicas de **aprendizado de máquina**, **análise exploratória de dados**, visualizações interativas com **Streamlit** e boas práticas de projeto em ciência de dados.
 
 🧠 Desenvolvido com foco em aprendizado, melhoria contínua e contribuição à comunidade científica.
