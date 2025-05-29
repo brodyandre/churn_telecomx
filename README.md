@@ -7,10 +7,8 @@
 #### para acessar o dashboard interativo, ja com o modelo random forest treinado e devidamente ajustado. Clique no icone do stremalite acima
 ---
 
----
-
 # 🎯 **Objetivo**:  
-Este projeto tem como propósito prever a **evasão de clientes (churn)** em uma empresa de telecomunicações fictícia — a **Telecom X** — utilizando técnicas de **aprendizado de máquina**, **análise exploratória de dados**, visualizações interativas com **Streamlit** e boas práticas de projeto em ciência de dados.
+Este projeto tem como propósito prever a **evasão de clientes (churn)** em uma empresa de telecomunicações fictícia — a **Telecom X** — utilizando técnicas de **aprendizado de máquina**, **análise exploratória de dados**, visualizações interativas com **Streamlit** e boas práticas de projeto em ciência de dados. Este projeto foi criado para o desafio do programa da **Oracle One** ao qual faço parte.
 
 🧠 Desenvolvido com foco em aprendizado, melhoria contínua e contribuição à comunidade científica.
 
