@@ -890,5 +890,289 @@ Accuracy: 0.75
 
 * Avaliar impacto de ações de retenção baseadas nesse modelo em KPIs de churn.
 
+## Documentação do Dashboard Interativo de Previsão de Churn - Telecom X (app.py)
+Introdução
+Este projeto apresenta um dashboard interativo desenvolvido com Streamlit, para análise e previsão de churn (cancelamento de clientes) da empresa Telecom X. O dashboard utiliza um modelo Random Forest previamente treinado e ajustado (tunning) para realizar previsões precisas.
+
+O objetivo é fornecer uma ferramenta visual para a equipe de análise e gerência, permitindo a exploração dos dados com filtros dinâmicos e métricas relevantes.
+
+Tecnologias Utilizadas
+* Python 3.x
+
+* Pandas
+
+* Streamlit
+
+Instalação
+Para rodar o dashboard localmente, instale as bibliotecas necessárias:
+
+```bash
+pip install pandas
+pip install streamlit
+
+```
+
+Estrutura do Código
+1. Configuração da Página
+
+```bash
+st.set_page_config(page_title="Dashboard Churn - Big Insights", layout="wide")
+
+```
+Define o título da aba do navegador e a largura do layout do dashboard, melhorando a visualização e usabilidade.
+
+2. Carregamento e Cache dos Dados
+```bash
+@st.cache_data
+def load_data():
+    df = pd.read_csv('df_expandido.csv')
+    return df
+
+df = load_data()
+
+```
+* A função load_data carrega o arquivo CSV com os dados expandidos e realiza cache dos dados para otimizar a performance, evitando recarregamentos desnecessários.
+
+* Arquivo esperado: df_expandido.csv
+
+3. Título Principal
+
+```bash
+st.title("Dashboard de Churn - Big Insights")
+
+```
+Exibe o título principal do dashboard.
 
 
+4. Sidebar com Filtros Interativos
+A sidebar contém filtros para refinar os dados visualizados:
+
+```bash
+st.sidebar.header("Filtros")
+
+```
+* Tempo de contrato (tenure): slider para definir o intervalo de meses do contrato.
+
+* Valor mensal (valor_mensal): slider para definir o intervalo do valor mensal pago.
+
+* SeniorCitizen: checkbox para filtrar apenas clientes idosos
+
+```bash
+tenure_min, tenure_max = int(df['tenure'].min()), int(df['tenure'].max())
+tenure_range = st.sidebar.slider("Tempo de contrato (meses)", tenure_min, tenure_max, (tenure_min, tenure_max))
+
+valor_mensal_min, valor_mensal_max = float(df['valor_mensal'].min()), float(df['valor_mensal'].max())
+valor_mensal_range = st.sidebar.slider("Valor Mensal (R$)", valor_mensal_min, valor_mensal_max, (valor_mensal_min, valor_mensal_max))
+
+senior = st.sidebar.checkbox("Mostrar somente clientes SeniorCitizen", value=False)
+
+```
+
+5. Aplicação dos Filtros
+Os filtros são aplicados para criar um dataframe filtrado:
+
+```bash
+df_filtered = df[
+    (df['tenure'] >= tenure_range[0]) &
+    (df['tenure'] <= tenure_range[1]) &
+    (df['valor_mensal'] >= valor_mensal_range[0]) &
+    (df['valor_mensal'] <= valor_mensal_range[1])
+]
+
+if senior:
+    df_filtered = df_filtered[df_filtered['SeniorCitizen'] == 1]
+
+```
+6. Exibição dos Dados Filtrados
+Exibe o número de registros após os filtros e a tabela dos dados filtrados:
+
+```bash
+st.write(f"### Dados filtrados ({len(df_filtered)} registros)")
+st.dataframe(df_filtered)
+
+```
+7. Estatísticas Rápidas
+Métricas básicas exibidas em colunas:
+
+* Clientes Totais: número total de clientes filtrados.
+
+* Clientes que Cancelaram (Churn): total de clientes que tiveram churn = 'Yes'.
+
+* Taxa de Churn (%): porcentagem de churn calculada no subset filtrado.
+
+```bash
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.metric("Clientes Totais", len(df_filtered))
+
+with col2:
+    churn_count = df_filtered[df_filtered['Churn'] == 'Yes'].shape[0]
+    st.metric("Clientes que Cancelaram (Churn)", churn_count)
+
+with col3:
+    churn_rate = 0 if len(df_filtered) == 0 else (churn_count / len(df_filtered)) * 100
+    st.metric("Taxa de Churn (%)", f"{churn_rate:.2f}%")
+
+ ```
+
+### Como Executar
+
+Na pasta do projeto, execute o comando:
+
+```bash
+streamlit run nome_do_arquivo.py
+
+```
+Substitua nome_do_arquivo.py pelo nome do script que contém o código do dashboard.
+
+Próximos Passos
+* Integração do modelo Random Forest para previsão de churn em tempo real com base nos filtros (ja incluído no dashboard do streamlit).
+
+* Inclusão de gráficos interativos para análise visual de métricas e distribuição.
+
+* Adição de mais filtros e segmentações para análises mais detalhadas.
+
+# Documentação da Integração do Modelo Random Forest para Previsão de Churn
+
+## Objetivo
+
+Integrar ao dashboard Streamlit um modelo **Random Forest** previamente treinado e ajustado para realizar previsões de churn em tempo real, com base nos dados filtrados pelo usuário.
+
+---
+
+## Dependências Adicionais
+
+Além das bibliotecas já usadas (pandas e streamlit), é necessário instalar:
+
+```bash
+pip install scikit-learn
+pip install joblib
+
+```
+* scikit-learn: para manipulação do modelo Random Forest.
+
+* joblib: para carregar o modelo salvo.
+
+### Carregamento do Modelo
+O modelo Random Forest treinado deve estar salvo em disco, por exemplo como random_forest_model.joblib.
+```bash
+import joblib
+
+@st.cache_data
+def load_model():
+    model = joblib.load('random_forest_model.joblib')
+    return model
+
+model = load_model()
+
+```
+
+### Preparação dos Dados para Predição
+* Selecionar as variáveis que o modelo utiliza (features).
+
+* Garantir que os dados estejam no formato esperado pelo modelo (tratamento de variáveis categóricas, normalização se necessário).
+
+* Exemplo simplificado:
+
+```bash
+features = ['tenure', 'valor_mensal', 'SeniorCitizen']  # lista das colunas usadas no modelo
+
+X_filtered = df_filtered[features]
+
+```
+
+
+### Realizando a Predição
+Com o modelo carregado e os dados preparados, aplicar a predição:
+
+```bash
+df_filtered['Churn_Prediction'] = model.predict(X_filtered)
+df_filtered['Probabilidade_Churn'] = model.predict_proba(X_filtered)[:, 1]
+
+```
+
+* Churn_Prediction: previsão binária (Yes/No ou 1/0).
+
+* Probabilidade_Churn: probabilidade da classe "churn".
+
+### Exibição dos Resultados no Dashboard
+Adicionar uma seção no dashboard para exibir os resultados da predição:
+
+```bash
+st.write("### Previsão de Churn nos Clientes Filtrados")
+
+st.dataframe(df_filtered[['cliente_id', 'Churn_Prediction', 'Probabilidade_Churn']])
+
+```
+
+### Métricas com Base na Predição
+Também é possível apresentar métricas agregadas sobre a predição, como:
+
+```bash
+col1, col2 = st.columns(2)
+
+with col1:
+    st.metric("Clientes com Predição de Churn", (df_filtered['Churn_Prediction'] == 1).sum())
+
+with col2:
+    taxa_predicao = 0 if len(df_filtered) == 0 else ((df_filtered['Churn_Prediction'] == 1).sum() / len(df_filtered)) * 100
+    st.metric("Taxa de Churn Prevista (%)", f"{taxa_predicao:.2f}%")
+
+```
+### Como Usar
+Prepare seu dataset df_expandido.csv com os dados já tratados e com as features corretas.
+
+Salve seu modelo treinado com joblib.dump(model, 'random_forest_model.joblib').
+
+Execute o Streamlit com o script atualizado.
+
+# 📊 Interpretação da Saída do Dashboard de Churn - Big Insights
+
+Este painel interativo permite explorar e analisar o comportamento de cancelamento (churn) de clientes da Telecom X, com base em variáveis-chave do relacionamento com a empresa.
+
+---
+
+## 🎯 Métricas Principais
+
+| Indicador                         | Descrição                                                                                                                                       |
+|----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Clientes Totais**              | Quantidade de clientes exibidos após aplicar os filtros definidos na barra lateral. Representa o total da amostra visualizada.                 |
+| **Clientes que Cancelaram (Churn)** | Quantidade de clientes da amostra filtrada que cancelaram o serviço (rótulo `Churn = Yes`). Indica a perda de clientes nesse grupo.           |
+| **Taxa de Churn (%)**           | Proporção percentual de clientes que cancelaram, calculada como: `(Clientes com Churn / Clientes Totais) × 100`. Alta taxa indica alerta.     |
+
+> ⚠️ **Interpretação**: Uma taxa de churn elevada em um segmento indica problemas potenciais com retenção, podendo exigir ações corretivas específicas para esse grupo.
+
+---
+
+## 🛠️ Painel Lateral de Filtros
+
+| Filtro                            | Descrição                                                                                                                                       |
+|----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Tempo de contrato (meses)**    | Intervalo de tempo (tenure) que representa há quanto tempo o cliente mantém o contrato com a empresa. Valores baixos indicam novos clientes.   |
+| **Valor Mensal (R$)**            | Faixa de valor da fatura mensal do cliente. Pode indicar diferentes perfis de planos (básico, intermediário, premium).                         |
+| **Mostrar somente clientes SeniorCitizen** | Filtra para mostrar apenas clientes classificados como idosos (`SeniorCitizen = 1`). Útil para análises demográficas.                         |
+
+> 💡 **Dica de uso**: Combine diferentes filtros para analisar segmentos específicos, como clientes idosos com baixo tempo de contrato e alto valor mensal, que podem ter maior propensão ao churn.
+
+---
+
+## 📌 Exemplo de Análise
+
+Imagine o seguinte cenário após aplicar filtros:
+- Tempo de contrato entre 1 e 6 meses
+- Valor mensal entre R$ 100 e R$ 150
+- Apenas clientes idosos
+
+**Resultado observado:**
+- Clientes Totais: 200  
+- Clientes que Cancelaram: 80  
+- Taxa de Churn: 40%
+
+🔎 **Interpretação**: Neste segmento, 4 a cada 10 clientes cancelaram, sugerindo que clientes idosos, com pouco tempo de contrato e alto custo mensal, estão mais propensos ao churn. Estratégias de retenção específicas devem ser analisadas para esse grupo.
+
+---
+
+## ✅ Conclusão
+
+O painel fornece uma maneira poderosa e visual de analisar o churn por segmento, facilitando a tomada de decisões estratégicas de retenção de clientes com base em dados reais.
