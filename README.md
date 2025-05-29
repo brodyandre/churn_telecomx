@@ -1176,3 +1176,39 @@ Imagine o seguinte cenário após aplicar filtros:
 ## ✅ Conclusão
 
 O painel fornece uma maneira poderosa e visual de analisar o churn por segmento, facilitando a tomada de decisões estratégicas de retenção de clientes com base em dados reais.
+
+---
+
+---
+
+### 👨‍💻 Sobre o Desenvolvedor
+
+**Luiz André de Souza**  
+📍 GitHub: [@brodyandre](https://github.com/brodyandre)
+
+> *Ralei bastante pra conseguir chegar até aqui!!!*  
+> Tentando apresentar um projeto completo, com início, meio e fim, com a intenção de criar um projeto de alto nível, que pudesse contribuir com a comunidade científica.  
+> Claro que ele não é perfeito! Mas acredito que juntos podemos ir mais longe.  
+> **Venha, contribua. Vamos tornar esse projeto uma referência!**
+
+---
+
+### 🚀 Como Contribuir
+
+[![GitHub issues](https://img.shields.io/github/issues/brodyandre/churn-telecom-x)](https://github.com/brodyandre/churn-telecom-x/issues)
+[![GitHub forks](https://img.shields.io/github/forks/brodyandre/churn-telecom-x)](https://github.com/brodyandre/churn-telecom-x/network)
+[![GitHub stars](https://img.shields.io/github/stars/brodyandre/churn-telecom-x)](https://github.com/brodyandre/churn-telecom-x/stargazers)
+[![GitHub license](https://img.shields.io/github/license/brodyandre/churn-telecom-x)](https://github.com/brodyandre/churn-telecom-x/blob/main/LICENSE)
+
+💡 Tem uma ideia para melhorar este projeto?  
+1. Faça um fork  
+2. Crie uma nova branch (`git checkout -b melhoria-minha`)  
+3. Commit suas mudanças (`git commit -m 'Sugestão de melhoria'`)  
+4. Dê um push (`git push origin melhoria-minha`)  
+5. Abra um **Pull Request**
+
+📩 Ou abra uma [issue aqui](https://github.com/brodyandre/churn-telecom-x/issues) para sugerir discussões, melhorias ou relatar bugs.
+
+---
+
+
