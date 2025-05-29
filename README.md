@@ -565,6 +565,15 @@ FileLink('/content/relatorio_churn_telecomx.pdf')
 ```
 📎 Clique aqui para baixar o relatório
 
+### Obs: caso aconteça algum erro na celula de instalação do kaleido conforme abaixo:
+
+```bash
+# Célula 1: Instalar Kaleido
+!pip install -U kaleido
+
+```
+Clique no menu **Ambiente de execução** e em seguida **Reiniciar sessão**. Agora ainda no menu **Ambiente de execução** podemos clicar em: **Executar tudo**. Todas as células restantes serão executadas sem mensagens de erro.
+
 ## 🔜 Etapa 21: Pré-processamento para Machine Learning
 Nesta etapa, preparamos o dataset df_expandido para a aplicação de algoritmos de Machine Learning, com foco no Random Forest Classifier, a fim de prever quais clientes possuem maior propensão ao churn.
 
