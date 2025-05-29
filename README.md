@@ -1195,10 +1195,10 @@ O painel fornece uma maneira poderosa e visual de analisar o churn por segmento,
 
 ### 🚀 Como Contribuir
 
-[![GitHub issues](https://img.shields.io/github/issues/brodyandre/churn-telecom-x)](https://github.com/brodyandre/churn-telecom-x/issues)
-[![GitHub forks](https://img.shields.io/github/forks/brodyandre/churn-telecom-x)](https://github.com/brodyandre/churn-telecom-x/network)
-[![GitHub stars](https://img.shields.io/github/stars/brodyandre/churn-telecom-x)](https://github.com/brodyandre/churn-telecom-x/stargazers)
-[![GitHub license](https://img.shields.io/github/license/brodyandre/churn-telecom-x)](https://github.com/brodyandre/churn-telecom-x/blob/main/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/brodyandre/churn_telecomx)](https://github.com/brodyandre/churn_telecomx/issues)
+[![GitHub forks](https://img.shields.io/github/forks/brodyandre/churn_telecomx)](https://github.com/brodyandre/churn_telecomx/network)
+[![GitHub stars](https://img.shields.io/github/stars/brodyandre/churn_telecomx)](https://github.com/brodyandre/churn_telecomx/stargazers)
+[![GitHub license](https://img.shields.io/github/license/brodyandre/churn_telecomx)](https://github.com/brodyandre/churn_telecomx/blob/main/LICENSE)
 
 💡 Tem uma ideia para melhorar este projeto?  
 1. Faça um fork  
@@ -1207,8 +1207,7 @@ O painel fornece uma maneira poderosa e visual de analisar o churn por segmento,
 4. Dê um push (`git push origin melhoria-minha`)  
 5. Abra um **Pull Request**
 
-📩 Ou abra uma [issue aqui](https://github.com/brodyandre/churn-telecom-x/issues) para sugerir discussões, melhorias ou relatar bugs.
+📩 Ou abra uma [issue aqui](https://github.com/brodyandre/churn_telecomx/issues) para sugerir discussões, melhorias ou relatar bugs.
 
 ---
-
 
