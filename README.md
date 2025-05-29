@@ -34,8 +34,9 @@ A partir de dados JSON reais, o projeto realiza um estudo completo que envolve d
 
 ---
 
-## 📚 Conteúdo do Projeto: Desenvolvemos um sumário interativo com os principais estudos realizados, para facilitar a navegação do usuário. Também inserimos um botão de "voltar"
- que permite retornar ao sumário inicial
+## 📚 Conteúdo do Projeto: 
+Desenvolvemos um sumário interativo com os principais estudos realizados, para facilitar a navegação do usuário. Também inserimos um botão de "voltar"
+que permite retornar ao sumário inicial
  
 <a name="indice"></a>
 
