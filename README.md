@@ -1208,7 +1208,53 @@ O painel fornece uma maneira poderosa e visual de analisar o churn por segmento,
 
 ---
 
----
+## 🗺️  Fluxograma simplificado do processo
+Aqui está o resumo visual do que o código faz, passo a passo:
+
+📂 Carregar dados CSV
+
+       ↓
+
+🎯 Definir variável-alvo: "Churn"
+      
+       ↓
+
+🔢 Converter "Yes"/"No" para 1/0
+       
+       ↓
+
+🧹 Limpar dados faltantes
+       
+       ↓
+
+📊 Separar variáveis: Numéricas e Categóricas
+       
+       ↓
+
+🔧 Pré-processar dados (OneHotEncoder)
+       
+       ↓
+
+🧪 Dividir em treino (70%) e teste (30%)
+       
+       ↓
+
+⚖️ Aplicar SMOTE (balancear classes)
+       
+       ↓
+
+🌲 Treinar modelo Random Forest com GridSearchCV
+       
+       ↓
+
+✅ Avaliar modelo (acurácia, relatório, confusão)
+       
+       ↓
+💾 Salvar modelo e pré-processador
+       
+       ↓
+⬇️ Fazer download (se estiver no Colab)
+
 
 ### 👨‍💻 Sobre o Desenvolvedor
 
