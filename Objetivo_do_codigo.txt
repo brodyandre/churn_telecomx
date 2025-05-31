@@ -1,0 +1,86 @@
+🧠 Objetivo do código:
+
+Treinar um modelo de IA que consiga prever se um cliente vai sair (churn) ou ficar, usando informações como plano contratado, tempo como cliente, uso de serviços, etc.
+
+🚶‍♂️ Etapas explicadas como para um iniciante:
+📥 1. Carrega os dados do arquivo
+
+df = pd.read_csv('/content/df_expandido.csv')
+Lê uma planilha com os dados dos clientes. Cada linha é um cliente, e cada coluna traz uma informação (nome do plano, idade do cliente, valor pago, etc).
+
+🎯 2. Define o que queremos prever
+
+target = 'Churn'
+Aqui dizemos: “queremos prever a coluna Churn”, que indica se o cliente cancelou (Yes) ou não cancelou (No).
+
+🔢 3. Transforma o ‘Yes’ e ‘No’ em números
+
+map_churn = {'No': 0, 'Yes': 1}
+A IA não entende texto como "Yes" e "No", então transformamos em 0 para "ficou" e 1 para "saiu".
+
+🧹 4. Limpa dados ausentes
+
+df = df.dropna(subset=[target])
+Remove linhas que não têm o valor de “Churn”. Sem essa informação, não dá para treinar o modelo.
+
+🧪 5. Separa os dados em ‘entrada’ e ‘resposta’
+
+X = df[features]  # Entradas (ex: tempo de contrato, plano, uso de internet)
+y = df[target]    # Resposta (se o cliente saiu ou não)
+
+🧮 6. Separa colunas numéricas e categóricas
+Porque colunas como “idade” são números, mas colunas como “tipo de plano” são textos. Precisamos tratá-las de forma diferente.
+
+🏗️ 7. Cria um “pré-processador”
+
+preprocessor = ColumnTransformer(...)
+Isso prepara os dados para o modelo, convertendo textos em números por meio de algo chamado OneHotEncoder.
+
+🧪 8. Divide os dados em treino e teste
+
+X_train, X_test, y_train, y_test = train_test_split(...)
+Usa 70% dos dados para ensinar o modelo e 30% para testar se ele aprendeu bem.
+
+⚖️ 9. Balanceia os dados com SMOTE
+
+smote = SMOTE(...)
+Às vezes, tem muito mais clientes que ficaram do que os que saíram. O SMOTE cria cópias artificiais de clientes que saíram, para equilibrar.
+
+🌲 10. Cria um modelo de floresta aleatória (Random Forest)
+
+rf = RandomForestClassifier(...)
+É um tipo de modelo de IA baseado em muitas “árvores de decisão”. Bem eficaz para esse tipo de problema.
+
+🔍 11. Faz uma busca pelos melhores parâmetros (GridSearch)
+
+GridSearchCV(...)
+Testa várias combinações de configurações para ver qual traz os melhores resultados.
+
+🧠 12. Treina o modelo com os melhores parâmetros
+
+grid_search.fit(...)
+Ensina o modelo a “aprender com o passado”, ou seja, a prever com base nos dados.
+
+✅ 13. Testa o modelo
+
+y_pred = grid_search.predict(X_test_prep)
+Agora o modelo tenta prever os resultados com dados que ele nunca viu. É como uma prova!
+
+📊 14. Mostra os resultados
+
+classification_report, confusion_matrix, accuracy_score
+Informa o quão bem o modelo foi. Acurácia, precisão, erros, acertos — tudo isso é mostrado.
+
+💾 15. Salva o modelo e o pré-processador
+
+joblib.dump(...)
+Salva o que foi treinado em arquivos, para poder usar depois sem precisar treinar de novo.
+
+⬇️ 16. (Opcional) Faz download dos arquivos no Google Colab
+
+files.download(...)
+Se estiver usando o Google Colab, os arquivos serão baixados para o seu computador.
+
+✅ Resumo final:
+Esse código pega uma tabela com dados de clientes, ensina um modelo de IA a prever se um cliente vai cancelar ou não, testa se o modelo funciona bem, e salva o modelo pronto para ser usado no futuro.
+
