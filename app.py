@@ -28,9 +28,11 @@ def load_data():
 # Função para treinar o modelo com GridSearch
 @st.cache_data(show_spinner=True)
 def train_model(df):
+    # Mapear target binário (simples): Churn Yes=1, No=0
     df = df.copy()
     df['Churn_binary'] = df['Churn'].map({'Yes':1, 'No':0})
 
+    # Features importantes (numéricas + dummies)
     feature_cols = [
         'tenure', 'valor_mensal',
         'Contract_Month-to-month', 'TechSupport_No',
@@ -40,14 +42,17 @@ def train_model(df):
     X = df[feature_cols]
     y = df['Churn_binary']
 
+    # Dividir treino/teste
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.3, random_state=42, stratify=y)
 
+    # Pipeline com scaler + RandomForest
     pipeline = Pipeline([
         ('scaler', StandardScaler()),
         ('clf', RandomForestClassifier(random_state=42))
     ])
 
+    # Parametros para GridSearch
     param_grid = {
         'clf__n_estimators': [50, 100],
         'clf__max_depth': [5, 10, None],
@@ -86,13 +91,15 @@ tenure_range = st.sidebar.slider(
 
 # Filtro valor mensal
 valor_mensal_min = round(float(df['valor_mensal'].min()), 2)
-valor_mensal_max_real = min(300.00, round(float(df['valor_mensal'].max()), 2))  # Limite máximo dinâmico em 300,00
+
+# Valor máximo fixo em 300,00
+valor_mensal_max = 300.00
 
 valor_mensal_range = st.sidebar.slider(
     "Valor Mensal (R$)",
     min_value=valor_mensal_min,
-    max_value=valor_mensal_max_real,
-    value=(valor_mensal_min, valor_mensal_max_real)
+    max_value=valor_mensal_max,
+    value=(valor_mensal_min, valor_mensal_max)
 )
 
 # Filtro SeniorCitizen (checkbox)
@@ -163,8 +170,10 @@ with st.spinner('Treinando o modelo... isso pode levar alguns segundos.'):
 
     st.write(f"Melhores parâmetros encontrados: {grid_search.best_params_}")
 
+    # Probabilidades para a classe positiva
     y_prob = grid_search.predict_proba(X_test)[:, 1]
 
+    # Avaliar e exibir métricas para diferentes thresholds
     def avaliar_threshold(threshold, y_prob, y_true):
         y_pred = (y_prob >= threshold).astype(int)
 
@@ -181,6 +190,7 @@ with st.spinner('Treinando o modelo... isso pode levar alguns segundos.'):
 
         return y_pred
 
+    # Mostrar curvas ROC e Precision-Recall com matplotlib + st.pyplot
     fpr, tpr, _ = roc_curve(y_test, y_prob)
     precision, recall, _ = precision_recall_curve(y_test, y_prob)
     auc_roc = roc_auc_score(y_test, y_prob)
@@ -203,10 +213,12 @@ with st.spinner('Treinando o modelo... isso pode levar alguns segundos.'):
 
     st.pyplot(fig)
 
+    # Testar thresholds e mostrar avaliação
     thresholds_teste = [0.3, 0.4, 0.5, 0.6, 0.7]
     for th in thresholds_teste:
         avaliar_threshold(th, y_prob, y_test)
 
+    # Threshold escolhido para demonstração
     threshold_escolhido = 0.4
     y_pred_ajustado = (y_prob >= threshold_escolhido).astype(int)
 
