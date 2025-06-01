@@ -1194,9 +1194,9 @@ Imagine o seguinte cenário após aplicar filtros:
 - Apenas clientes idosos
 
 **Resultado observado:**
-- Clientes Totais: 200  
-- Clientes que Cancelaram: 80  
-- Taxa de Churn: 40%
+- Clientes Totais: 3  
+- Clientes que Cancelaram: 3  
+- Taxa de Churn: 100%
 
 🔎 **Interpretação**: Neste segmento, 4 a cada 10 clientes cancelaram, sugerindo que clientes idosos, com pouco tempo de contrato e alto custo mensal, estão mais propensos ao churn. Estratégias de retenção específicas devem ser analisadas para esse grupo.
 
