@@ -91,12 +91,15 @@ tenure_range = st.sidebar.slider(
 
 # Filtro valor mensal
 valor_mensal_min = round(float(df['valor_mensal'].min()), 2)
-valor_mensal_max = round(float(df['valor_mensal'].max()), 2)
+
+# Limitar valor máximo do slider a R$ 300,00
+valor_mensal_max_real = min(300.00, round(float(df['valor_mensal'].max()), 2))
+
 valor_mensal_range = st.sidebar.slider(
     "Valor Mensal (R$)",
     min_value=valor_mensal_min,
-    max_value=valor_mensal_max,
-    value=(valor_mensal_min, valor_mensal_max)
+    max_value=valor_mensal_max_real,
+    value=(valor_mensal_min, valor_mensal_max_real)
 )
 
 # Filtro SeniorCitizen (checkbox)
