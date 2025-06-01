@@ -1190,15 +1190,15 @@ Este painel interativo permite explorar e analisar o comportamento de cancelamen
 
 Imagine o seguinte cenário após aplicar filtros:
 - Tempo de contrato entre 1 e 6 meses
-- Valor mensal entre R$ 100 e R$ 150
+- Valor mensal entre R$ 60 e R$ 150
 - Apenas clientes idosos
 
 **Resultado observado:**
-- Clientes Totais: 3  
-- Clientes que Cancelaram: 3  
-- Taxa de Churn: 100%
+- Clientes Totais: 155  
+- Clientes que Cancelaram: 117 
+- Taxa de Churn: 75,48 %
 
-🔎 **Interpretação**: Neste segmento, 4 a cada 10 clientes cancelaram, sugerindo que clientes idosos, com pouco tempo de contrato e alto custo mensal, estão mais propensos ao churn. Estratégias de retenção específicas devem ser analisadas para esse grupo.
+🔎 **Interpretação**: Neste segmento, 7,5 a cada 10 clientes cancelaram, sugerindo que clientes idosos (SeniorCitzens), com pouco tempo de contrato e alto custo mensal, estão mais propensos ao churn. Estratégias de retenção específicas devem ser analisadas para esse grupo.
 
 ---
 
