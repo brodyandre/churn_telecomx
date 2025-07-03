@@ -1,4 +1,4 @@
-# 📊 Projeto: Previsão de Churn - Telecom X
+# 📊 Projeto: Previsão de Churn - Telecom X - com Random Forest e Deploy no Streamlit
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repositório-24292e?style=for-the-badge&logo=github&logoColor=white)](https://github.com/brodyandre/churn_telecomx)
 [![Streamlit App](https://img.shields.io/badge/Dashboard-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://churntelecomx-unhnurkqur8sppnwipdczy.streamlit.app/)
